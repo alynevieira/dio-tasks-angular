@@ -1,1 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { 
+  height: 100%; 
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+.container {
+  margin: 1rem 15rem;
+}
+
+.app-nav--search .mat-form-field-flex {
+  align-items: center !important;
+  height: 2.5rem;
+}
+
+.app-nav--search .mat-form-field-wrapper {
+  padding-bottom: 0;
+  margin: 0 !important;
+}
+
+.app-card--actions {
+  float: right;
+}
+
+.app-input {
+  width: 100%;
+}
+
+.app-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-nav--search {
+  width: 25rem;
+}
+
+.app-checkbox--label > .mat-checkbox-layout .mat-checkbox-label {
+  padding: .5rem;
+
+  line-height: 20px;
+}
+
+.mat-list-base .mat-list-item.example-margins {
+  height: 70px !important;
+}

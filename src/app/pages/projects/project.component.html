@@ -1,0 +1,53 @@
+<mat-card>
+  <div class="app-nav">
+    <h2 style="margin-bottom: 0;">Bem vindo (a), Alyne</h2>
+    
+    <button mat-raised-button color="primary" (click)="openDialog()">
+      <mat-icon [style.font-size.px]="20">add</mat-icon> Criar novo projeto
+    </button>
+  </div>
+
+  <div class="app-list--project" style="min-height: 400px;">
+
+    <div *ngFor="let project of data">
+      <mat-card style="cursor: pointer;">
+        <div class="app-list--inline">
+          <mat-card-title [style.margin-bottom.px]="0">{{ project.title }}</mat-card-title>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+    
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openDialogEdit(project)">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button mat-menu-item (click)="delete(project.id)">
+            <mat-icon>delete</mat-icon>
+            <span>Excluir</span>
+          </button>
+        </mat-menu>
+  
+        <div matRipple [routerLink]="['/tasks', project.id]">
+          <mat-card-subtitle class="app-list--subtitle">
+            <mat-icon matSuffix class="app-list--icon">flag</mat-icon>
+            {{ project.createdAt }}
+          </mat-card-subtitle>
+      
+          <mat-card-content>{{ project.description }}</mat-card-content>
+        
+          <div class="app-list--inline">
+            <p class="app-list--progress">Progresso do projeto</p>
+      
+            <p>{{ project.percent }}%</p>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="project.percent"></mat-progress-bar>
+        </div>
+  
+      </mat-card>
+    </div>
+  
+  </div>
+</mat-card>
+

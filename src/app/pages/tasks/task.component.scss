@@ -1,0 +1,50 @@
+
+
+.app-task--grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+
+  column-gap: 20px;
+}
+
+.app-checkbox--title {
+  margin-bottom: 0;
+
+  font-size: 16px;
+  font-weight: 500;
+  
+  color: #595959
+}
+
+.app-checkbox--subtitle {
+  margin-bottom: 0;
+  font-size: 11px;
+
+  color: #c3c6cd;
+}
+
+.app-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+svg {
+  width: 100px;
+  height: 100px;
+  zoom: 2.5;
+}
+
+path {
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+path.grey {
+  stroke: lightgrey;
+}
+
+path.blue {
+  stroke: blue;
+  stroke-dasharray: calc(40 * 3.142 * 1.85);
+}
