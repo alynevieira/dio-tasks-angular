@@ -3,11 +3,11 @@
 <h1 align="center">Sistema de tarefas - DIO</h1>
 
 <p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/alynevieira/tasks-angular?color=56BEB8">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/alynevieira/dio-tasks-angular?color=56BEB8">
 
-  <img alt="Github language count" src="https://img.shields.io/github/languages/count/alynevieira/tasks-angular?color=56BEB8">
+  <img alt="Github language count" src="https://img.shields.io/github/languages/count/alynevieira/dio-tasks-angular?color=56BEB8">
 
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/alynevieira/tasks-angular?color=56BEB8">
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/alynevieira/dio-tasks-angular?color=56BEB8">
 </p>
 
 <p align="center">
@@ -61,7 +61,7 @@ $ npm run server
 ```
 
 <div align="center">
-Feito com :heart: por <a href="https://github.com/{{YOUR_GITHUB_USERNAME}}" target="_blank">Alyne Vieira</a>
+Feito com :heart: por <a href="https://github.com/alynevieira" target="_blank">Alyne Vieira</a>
 </div>
 &#xa0;
 
