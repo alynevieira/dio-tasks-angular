@@ -12,6 +12,7 @@
 
   font-size: 16px;
   font-weight: 500;
+  white-space: pre-line;
   
   color: styles.$color-gray--dark;
 }
@@ -19,6 +20,7 @@
 .app-checkbox--subtitle {
   margin-bottom: 0;
   font-size: 11px;
+  white-space: pre-line;
 
   color: styles.$color-gray--light;
 }
