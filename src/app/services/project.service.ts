@@ -12,7 +12,7 @@ export class ProjectService {
     return this.http.get<IProject[]>('http://localhost:3000/projects');
   }
 
-  getProjectById(id: number): Observable<IProject> {
+  getProjectById(id: string): Observable<IProject> {
     return this.http.get<IProject>('http://localhost:3000/projects/' + id);
   }
 

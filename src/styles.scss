@@ -1,4 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+$color-blue: #3f51b5;
+$color-gray: #a5a5a5;
+$color-gray--light: #c3c6cd;
+$color-gray--dark: #595959;
+$color-green: #dcf3eb;
+$color-red: #fff8f8;
 
 html, body { 
   height: 100%; 
@@ -49,4 +54,22 @@ body {
 
 .mat-list-base .mat-list-item.example-margins {
   height: 70px !important;
+}
+
+.app-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 4rem;
+}
+
+.green-snackbar {
+  background: $color-green;
+  color:#595959;
+}
+
+.red-snackbar {
+  background: $color-red;
+  color:#595959;
 }

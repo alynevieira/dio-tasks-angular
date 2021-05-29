@@ -1,18 +1,21 @@
-<mat-card>
+<mat-card style="min-height: 500px;">
   <div class="app-nav">
-    <h2 style="margin-bottom: 0;">Bem vindo (a), Alyne</h2>
+    <h2 style="margin-bottom: 0;">Dashboard</h2>
     
     <button mat-raised-button color="primary" (click)="openDialog()">
       <mat-icon [style.font-size.px]="20">add</mat-icon> Criar novo projeto
     </button>
   </div>
 
-  <div class="app-list--project" style="min-height: 400px;">
+  <div class="app-message" *ngIf="!loading && !data.length">
+    <h3>Não há projetos cadastrados. :(</h3>
+  </div>
 
+  <div class="app-list--project">
     <div *ngFor="let project of data">
       <mat-card style="cursor: pointer;">
         <div class="app-list--inline">
-          <mat-card-title [style.margin-bottom.px]="0">{{ project.title }}</mat-card-title>
+          <h2 [style.margin-bottom.px]="0">{{ project.title }}</h2>
           <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -32,7 +35,7 @@
         <div matRipple [routerLink]="['/tasks', project.id]">
           <mat-card-subtitle class="app-list--subtitle">
             <mat-icon matSuffix class="app-list--icon">flag</mat-icon>
-            {{ project.createdAt }}
+            {{ project.createdAt | date: 'mediumDate' : '' : 'pt-BR'  }}
           </mat-card-subtitle>
       
           <mat-card-content>{{ project.description }}</mat-card-content>
@@ -47,7 +50,6 @@
   
       </mat-card>
     </div>
-  
   </div>
 </mat-card>
 

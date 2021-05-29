@@ -1,4 +1,4 @@
-
+@use 'src/styles' as styles;
 
 .app-task--grid {
   display: grid;
@@ -13,14 +13,14 @@
   font-size: 16px;
   font-weight: 500;
   
-  color: #595959
+  color: styles.$color-gray--dark;
 }
 
 .app-checkbox--subtitle {
   margin-bottom: 0;
   font-size: 11px;
 
-  color: #c3c6cd;
+  color: styles.$color-gray--light;
 }
 
 .app-progress {
@@ -29,10 +29,20 @@
   justify-content: center;
 }
 
+.app-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-space {
+  flex: 1 1 auto;
+}
+
 svg {
   width: 100px;
   height: 100px;
-  zoom: 2.5;
+  zoom: 2;
 }
 
 path {
@@ -45,6 +55,16 @@ path.grey {
 }
 
 path.blue {
-  stroke: blue;
+  stroke: styles.$color-blue;
+  stroke-width: 6px;
   stroke-dasharray: calc(40 * 3.142 * 1.85);
+}
+
+text.percent {
+  fill: styles.$color-blue;
+  font-weight: 600;
+}
+
+text.subtext {
+  fill: styles.$color-gray;
 }

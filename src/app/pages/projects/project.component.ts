@@ -1,5 +1,4 @@
-import { DatePipe } from "@angular/common";
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { 
   MatSnackBar, 
@@ -11,6 +10,7 @@ import { take } from "rxjs/operators";
 import { DialogComponent } from "src/app/components/dialog/dialog.component";
 import { IProject } from "src/app/interfaces/project.interface";
 import { ITask } from "src/app/interfaces/task.interface";
+import { AlertService } from "src/app/services/alert.service";
 import { DataService } from "src/app/services/data.service";
 import { ProjectService } from "src/app/services/project.service";
 import { TaskService } from "src/app/services/task.service";
@@ -18,13 +18,11 @@ import { TaskService } from "src/app/services/task.service";
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss'],
-  providers: [DatePipe]
+  styleUrls: ['./project.component.scss']
 })
 
-export class ProjectComponent implements OnInit {
-  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
-  verticalPosition: MatSnackBarVerticalPosition = 'top';
+export class ProjectComponent {
+  loading: boolean = true;
 
   project: IProject;
   data: IProject[] = [];
@@ -32,22 +30,21 @@ export class ProjectComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private datePipe: DatePipe,
-    private _snackBar: MatSnackBar,
+    private alertService: AlertService,
     private projectService: ProjectService,
     private taskService: TaskService,
     private dataService: DataService) { 
       this.initialData();
-    }
+  }
 
-  ngOnInit(): void {}
-
-  initialData() {
+  initialData(): void {
     this.dataService.project$
     .pipe(take(1))
       .subscribe(res => { 
         if(res.length) {
           this.data = res;
+
+          this.loading = false;
         } else {
           this.getAll();
         } 
@@ -58,6 +55,8 @@ export class ProjectComponent implements OnInit {
       .subscribe(res => { 
         if(res.length) {
           this.tasks = res;
+
+           this.loading = false;
         } else {
           this.getAllTasks();
         } 
@@ -69,6 +68,11 @@ export class ProjectComponent implements OnInit {
     .subscribe(result => {
       this.data = result;
       this.dataService.project  = result;
+
+      this.loading = false;
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 
@@ -76,6 +80,11 @@ export class ProjectComponent implements OnInit {
     this.taskService.getAll()
     .subscribe(result => {
       this.dataService.task  = result;
+
+       this.loading = false;
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 
@@ -136,28 +145,26 @@ export class ProjectComponent implements OnInit {
   }
 
   save(): void {
-    this.project.createdAt = this.datePipe.transform(this.project.createdAt, 'dd/MM/yyyy');
-
     this.projectService.create(this.project)
-    .subscribe(data => {
-      this._snackBar.open('Projeto criado com sucesso!', 'Fechar', {
-        horizontalPosition: this.horizontalPosition,
-        verticalPosition: this.verticalPosition,
-      });
+    .subscribe(() => {
+      this.alertService.success('Projeto criado com sucesso!', 'Fechar');
 
       this.getAll();
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 
   update(): void {
     this.projectService.update(this.project)
     .subscribe(() => {
-      this._snackBar.open('Projeto alterado com sucesso!', 'Fechar', {
-        horizontalPosition: this.horizontalPosition,
-        verticalPosition: this.verticalPosition,
-      });
+      this.alertService.success('Projeto alterado com sucesso!', 'Fechar');
 
       this.getAll();
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 
@@ -170,12 +177,12 @@ export class ProjectComponent implements OnInit {
 
     this.projectService.delete(id)
     .subscribe(() => {
-      this._snackBar.open('Projeto excluído com sucesso!', 'Fechar', {
-        horizontalPosition: this.horizontalPosition,
-        verticalPosition: this.verticalPosition,
-      });
+      this.alertService.success('Projeto excluído com sucesso!', 'Fechar');
 
       this.getAll();
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 

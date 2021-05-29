@@ -1,12 +1,14 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from "@angular/material/snack-bar";
 import { ActivatedRoute } from "@angular/router";
 import { take } from "rxjs/operators";
 
 import { DialogComponent } from "src/app/components/dialog/dialog.component";
+import { IProject } from "src/app/interfaces/project.interface";
 import { ITask } from "src/app/interfaces/task.interface";
+import { AlertService } from "src/app/services/alert.service";
 import { DataService } from "src/app/services/data.service";
+import { ProjectService } from "src/app/services/project.service";
 import { TaskService } from "src/app/services/task.service";
 
 @Component({
@@ -15,11 +17,11 @@ import { TaskService } from "src/app/services/task.service";
   styleUrls: ['./task.component.scss']
 })
 
-export class TaskComponent implements OnInit {
-  horizontalPosition: MatSnackBarHorizontalPosition = 'end';
-  verticalPosition: MatSnackBarVerticalPosition = 'top';
+export class TaskComponent {
+  loading: boolean = true;
 
   idProject: string;
+  project: IProject;
   task: ITask;
   tasks: ITask[] = [];
 
@@ -29,41 +31,71 @@ export class TaskComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
+    private alertService: AlertService,
     private taskService: TaskService,
-    private dataService: DataService,
-    private _snackBar: MatSnackBar) {
+    private projectService: ProjectService,
+    private dataService: DataService) {
       this.idProject = this.route.snapshot.params.id;
       this.initialData();
     }
-
-  ngOnInit() {}
   
   initialData() {    
     this.dataService.task$
     .pipe(take(1))
       .subscribe(res => {
-        console.log(res)
         if(res.length) {
           this.tasks = res.filter(task => task.idProject === this.idProject);
 
+          this.loading = false;
           this.calculatePercent();
         } else {
           this.getTask();
         }
       });
+
+    this.dataService.project$
+    .pipe(take(1))
+    .subscribe(project => {
+      if(project.length) {
+        project.filter(project => {
+          if(project.id === this.idProject) this.project = project
+        });
+
+      } else {
+        this.getProject();
+      }
+      
+    })
   }
 
   getTask() {
     this.taskService.getAll()
     .pipe(take(1))
     .subscribe(result => {
-      console.log(result)
       if (result) {
         this.tasks = result.filter(task => task.idProject === this.idProject);
         this.dataService.task = result;       
 
+        this.loading = false;
         this.calculatePercent();
       }
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
+    })
+  }
+
+  getProject() {
+    this.projectService.getAll()
+    .subscribe(result => {
+      result.map(project => {
+        if(project.id === this.idProject) this.project = project
+      })
+
+      this.dataService.project  = result;
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 
@@ -74,8 +106,6 @@ export class TaskComponent implements OnInit {
     this.tasks.map(task => {
       task.done ? ++checked : checked
     });
-
-    console.log(checked, count)
 
     if (!count && !checked) {
       this.percent = 0;
@@ -102,9 +132,15 @@ export class TaskComponent implements OnInit {
         this.taskService.updateProcessProject(percent, task.idProject)
         .subscribe(project => {
           this.dataService.project = project;
-        }, err => { console.log(err) })
+        }, err => {
+          this.alertService.success('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+          console.log(err);
+        })
 
-      }, err => { console.log(err) });
+      }, err => {
+        this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+        console.log(err);
+      })
     }
   }
 
@@ -126,12 +162,40 @@ export class TaskComponent implements OnInit {
           id: id,
           title: result.get('title').value,
           description: result.get('description').value,
-          done: false
+          done: false,
+          createdAt: new Date().toString()
         }
 
         this.task = obj;
 
         this.save();
+      }
+    })
+  }
+
+  openDialogEdit(task: ITask): void {
+    const config = new MatDialogConfig();
+    config.data = {
+      title: 'Editar tarefa',
+      fullForm: {
+        title: task.title, 
+        description: task.description
+      }
+    };
+    config.width = "500px";
+    
+    const resultDialog = this.dialog.open(DialogComponent, config);
+
+    resultDialog.afterClosed().subscribe(result => {
+      if (result) {
+        this.task = result.value;
+
+        this.task.id = task.id;
+        this.task.done = task.done;
+        this.task.idProject = task.idProject
+        this.task.createdAt = task.createdAt;
+
+        this.update();
       }
     })
   }
@@ -147,12 +211,39 @@ export class TaskComponent implements OnInit {
   save() {
     this.taskService.create(this.task)
     .subscribe(() => {
-      this._snackBar.open('Tarefa salva com sucesso!', 'Fechar', {
-        horizontalPosition: this.horizontalPosition,
-        verticalPosition: this.verticalPosition,
-      });
+      this.getTask();
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
+    })
+  }
+
+  update(): void {
+    this.taskService.update(this.task)
+    .subscribe(() => {
+      this.alertService.success('Tarefa alterada com sucesso!', 'Fechar');
 
       this.getTask();
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
+    })
+  }
+
+  delete(task: ITask): void {
+    this.task = task;
+    this.task.done = false;
+
+    this.markIsDone(this.task);
+
+    this.taskService.delete(task.id)
+    .subscribe(() => {
+      this.alertService.success('Tarefa excluída com sucesso!', 'Fechar');
+
+      this.getTask();
+    }, err => {
+      this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
+      console.log(err);
     })
   }
 }

@@ -1,8 +1,13 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { LOCALE_ID } from '@angular/core';
+import localePt from '@angular/common/locales/pt';
+
+registerLocaleData(localePt);
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,12 +31,12 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { TaskComponent } from './pages/tasks/task.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { LoginComponent } from './pages/login/login.component';
 import { ProjectComponent } from './pages/projects/project.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { ProjectService } from './services/project.service';
 import { TaskService } from './services/task.service';
 import { DataService } from './services/data.service';
+import { AlertService } from './services/alert.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +44,6 @@ import { DataService } from './services/data.service';
     NavbarComponent,
     HomeComponent,
     TaskComponent,
-    LoginComponent,
     ProjectComponent,
     DialogComponent,
   ],
@@ -47,6 +51,7 @@ import { DataService } from './services/data.service';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -70,7 +75,9 @@ import { DataService } from './services/data.service';
   providers: [
     ProjectService,
     TaskService,
-    DataService
+    DataService,
+    AlertService,
+    { provide: LOCALE_ID, useValue: "pt-BR" },
   ],
   bootstrap: [AppComponent]
 })

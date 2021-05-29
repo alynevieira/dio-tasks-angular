@@ -1,14 +1,9 @@
 <mat-card>
   <div class="app-nav">
-    <h2 style="margin-bottom: 0;">Tarefas</h2>
-    <p style="margin-bottom: 0;">
-      <mat-form-field class="app-nav--search" appearance="outline">
-        <mat-label>Pesquisar</mat-label>
-        <input matInput placeholder="Pesquisar...">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </p>
-
+    <button mat-button color="accent" [routerLink]="['/dashboard']">
+      <mat-icon style="font-size: 20px;">arrow_back</mat-icon>
+      Voltar para dashboard
+    </button>
     <button mat-raised-button color="primary" (click)="openDialog()">
       <mat-icon [style.font-size.px]="20">add</mat-icon> Criar nova tarefa
     </button>
@@ -17,35 +12,56 @@
 
 <div class="app-task--grid">
   <mat-card style="margin-top: 20px;">
-    <mat-card-header>
-      <mat-card-title>Tarefas</mat-card-title>
-    </mat-card-header>
+    <h2>Tarefas</h2>
 
-    <div class="app-nav">
-      <mat-list>
-        <div *ngFor="let task of tasks">
-          <mat-list-item class="example-margins">
-            <mat-checkbox class="app-checkbox--label" (change)="markIsDone(task)" [(ngModel)]="task.done">
-              <p class="app-checkbox--title">{{ task.title }}</p>
-              <p class="app-checkbox--subtitle">{{ task.description }}</p>
-            </mat-checkbox>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        </div>
-      </mat-list>
+    <div class="app-message" *ngIf="!loading && !tasks.length">
+      <h3>Não há tarefas cadastradas. :(</h3>
     </div>
+
+    <mat-list>
+      <div *ngFor="let task of tasks">
+        <mat-list-item class="example-margins">
+          <mat-checkbox class="app-checkbox--label" (change)="markIsDone(task)" [(ngModel)]="task.done">
+            <p class="app-checkbox--title">{{ task.title }}</p>
+            <p class="app-checkbox--subtitle">{{ task.description }}</p>
+          </mat-checkbox>
+
+          <span class="app-space"></span>
+        
+          <div class="app-buttons">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openDialogEdit(task)">
+                <mat-icon>edit</mat-icon>
+                <span>Editar</span>
+              </button>
+              <button mat-menu-item (click)="delete(task)">
+                <mat-icon>delete</mat-icon>
+                <span>Excluir</span>
+              </button>
+            </mat-menu>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </div>
+    </mat-list>
   </mat-card>
 
   <mat-card style="margin-top: 20px; max-height: 300px;">
-    <mat-card-header>
-      <mat-card-title>Progresso</mat-card-title>
-    </mat-card-header>
+    <span>
+      <h2 style="margin-bottom: 5px;">Progresso do projeto</h2>
+      <mat-card-subtitle>Iniciado {{ project?.createdAt | date: 'mediumDate' : '' : 'pt-BR'  }}</mat-card-subtitle>
+    </span>
 
-    <div class="spinners">
+    <div class="app-progress">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 100 100">
-          <path class="grey" d="M40,90 A40,40 0 1,1 60,90" style="fill:none;"/>
-          <path [ngStyle]="{'stroke-dashoffset':percentPath}" class="blue" d="M40,90 A40,40 0 1,1 60,90" style="fill:none;"/>
-          <text x="50" y="50" text-anchor="middle" dy="7" font-size="20">{{ percent }}%</text>
+        <path class="grey" d="M40,90 A40,40 0 1,1 60,90" style="fill:none;"/>
+        <path [ngStyle]="{'stroke-dashoffset':percentPath}" class="blue" d="M40,90 A40,40 0 1,1 60,90" style="fill:none;"/>
+        <text x="50" y="50" text-anchor="middle" dy="4" font-size="16" class="percent">{{ percent }}%</text>
+        <text x="50" y="50" text-anchor="middle" dy="14" font-size="6" class="subtext">Tarefas completadas</text>
       </svg>
     </div>
 
