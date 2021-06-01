@@ -1,4 +1,8 @@
-<div align="center" id="top"> </div>
+<div align="center" id="top"> 
+  <img src="./src/assets/img/tasks.PNG" alt="Tasks Angular" />
+
+  &#xa0;
+</div>
 
 <h1 align="center">Sistema de tarefas - DIO</h1>
 

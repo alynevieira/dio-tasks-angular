@@ -29,8 +29,8 @@ export class TaskService {
     return this.http.put<ITask>('http://localhost:3000/tasks/' + tasks.id, tasks);
   }
 
-  updateProcessTask(item: any, id: string): Observable<any> {
-    return this.http.patch<any>('http://localhost:3000/tasks/' + id, item);
+  updateProcessTask(item: any, id: string): Observable<ITask> {
+    return this.http.patch<ITask>('http://localhost:3000/tasks/' + id, item);
   }
 
   updateProcessProject(item: any, id: string): Observable<any> {

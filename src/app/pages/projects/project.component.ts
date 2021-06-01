@@ -1,10 +1,5 @@
 import { Component } from "@angular/core";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import { 
-  MatSnackBar, 
-  MatSnackBarHorizontalPosition, 
-  MatSnackBarVerticalPosition 
-} from "@angular/material/snack-bar";
 import { take } from "rxjs/operators";
 
 import { DialogComponent } from "src/app/components/dialog/dialog.component";
@@ -38,18 +33,6 @@ export class ProjectComponent {
   }
 
   initialData(): void {
-    this.dataService.project$
-    .pipe(take(1))
-      .subscribe(res => { 
-        if(res.length) {
-          this.data = res;
-
-          this.loading = false;
-        } else {
-          this.getAll();
-        } 
-      });
-
     this.dataService.task$
     .pipe(take(1))
       .subscribe(res => { 
@@ -60,7 +43,26 @@ export class ProjectComponent {
         } else {
           this.getAllTasks();
         } 
-      });    
+      });
+
+      this.dataService.project$
+      .pipe(take(1))
+        .subscribe(res => { 
+          if(res.length) {
+            this.data = res;
+  
+            this.data.map(project => {
+              let tasksOfProject = this.tasks.filter(result => result.idProject === project.id);
+              let data = this.dataService.calculatePercent(tasksOfProject, project.id);
+
+              project.percent = data.percent;
+            })
+  
+            this.loading = false;
+          } else {
+            this.getAll();
+          } 
+        });
   }
 
   getAll(): void {
@@ -68,6 +70,15 @@ export class ProjectComponent {
     .subscribe(result => {
       this.data = result;
       this.dataService.project  = result;
+
+      this.data.map(project => {
+        this.dataService.task$.subscribe(data => {
+          let tasksOfProject = data.filter(result => result.idProject === project.id);
+          let dataPercent = this.dataService.calculatePercent(tasksOfProject, project.id);
+  
+          project.percent = dataPercent.percent;
+        })
+      })
 
       this.loading = false;
     }, err => {
@@ -81,7 +92,7 @@ export class ProjectComponent {
     .subscribe(result => {
       this.dataService.task  = result;
 
-       this.loading = false;
+      this.loading = false;
     }, err => {
       this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
       console.log(err);

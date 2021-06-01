@@ -27,4 +27,28 @@ export class DataService {
   set project(value: IProject[]) {
     this.projects.next(value);
   }
+
+  calculatePercent(tasks: ITask[], idProject: string) {
+    let count, checked = 0;
+    const data = {
+      idProject: idProject, 
+      percent: 0,
+      percentPath: 233
+    }
+
+    count = tasks.length;
+
+    tasks.map(result => {
+      result.done ? ++checked : checked;
+    })
+
+    if (!count && !checked) {
+      return data
+    }
+
+    data.percent = parseInt(((checked / count) * 100).toString(), 10);
+    data.percentPath = (233 - (data.percent * 2.33));
+
+    return data
+  }
 }

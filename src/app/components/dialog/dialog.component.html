@@ -8,7 +8,13 @@
     <br>
     <mat-form-field class="app-input" appearance="outline">
       <mat-label>Descrição</mat-label>
-      <textarea matInput formControlName="description"></textarea>
+      <textarea 
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="2"
+        cdkAutosizeMaxRows="5"
+        formControlName="description">
+      </textarea>
     </mat-form-field>
   </form>
 

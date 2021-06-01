@@ -39,15 +39,19 @@ export class TaskComponent {
       this.initialData();
     }
   
-  initialData() {    
+  initialData(): void {    
     this.dataService.task$
     .pipe(take(1))
       .subscribe(res => {
         if(res.length) {
           this.tasks = res.filter(task => task.idProject === this.idProject);
+          
+          let data = this.dataService.calculatePercent(this.tasks, this.idProject);
+          
+          this.percent = data.percent;
+          this.percentPath = data.percentPath;
 
           this.loading = false;
-          this.calculatePercent();
         } else {
           this.getTask();
         }
@@ -68,16 +72,20 @@ export class TaskComponent {
     })
   }
 
-  getTask() {
+  getTask(): void {
     this.taskService.getAll()
     .pipe(take(1))
     .subscribe(result => {
       if (result) {
         this.tasks = result.filter(task => task.idProject === this.idProject);
-        this.dataService.task = result;       
+        this.dataService.task = result;
+
+        let data = this.dataService.calculatePercent(this.tasks, this.idProject);
+        
+        this.percent = data.percent;
+        this.percentPath = data.percentPath;
 
         this.loading = false;
-        this.calculatePercent();
       }
     }, err => {
       this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
@@ -85,7 +93,7 @@ export class TaskComponent {
     })
   }
 
-  getProject() {
+  getProject(): void {
     this.projectService.getAll()
     .subscribe(result => {
       result.map(project => {
@@ -99,44 +107,13 @@ export class TaskComponent {
     })
   }
 
-  calculatePercent() {
-    const count = this.tasks.length;
-
-    let checked = 0;
-    this.tasks.map(task => {
-      task.done ? ++checked : checked
-    });
-
-    if (!count && !checked) {
-      this.percent = 0;
-      this.percentPath = 233;
-
-      return
-    }
-    
-    this.percent = parseInt(((checked / count) * 100).toString(), 10);
-
-    this.percentPath = (233-(this.percent*2.33));
-  }
-
-  markIsDone(task: ITask) {
+  markIsDone(task: ITask): void {
     if(task) {
-      this.calculatePercent();
-
-      const percent = { percent: this.percent }
       const done = { done: task.done }
   
       this.taskService.updateProcessTask(done, task.id)
       .subscribe(() => {
-
-        this.taskService.updateProcessProject(percent, task.idProject)
-        .subscribe(project => {
-          this.dataService.project = project;
-        }, err => {
-          this.alertService.success('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
-          console.log(err);
-        })
-
+        this.getTask();
       }, err => {
         this.alertService.error('Ocorreu um erro, tente novamente mais tarde', 'Fechar');
         console.log(err);
@@ -208,7 +185,7 @@ export class TaskComponent {
     });
   }
 
-  save() {
+  save(): void {
     this.taskService.create(this.task)
     .subscribe(() => {
       this.getTask();
@@ -230,13 +207,8 @@ export class TaskComponent {
     })
   }
 
-  delete(task: ITask): void {
-    this.task = task;
-    this.task.done = false;
-
-    this.markIsDone(this.task);
-
-    this.taskService.delete(task.id)
+  delete(id: string): void {
+    this.taskService.delete(id)
     .subscribe(() => {
       this.alertService.success('Tarefa excluída com sucesso!', 'Fechar');
 
